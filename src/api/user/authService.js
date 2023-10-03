@@ -2,7 +2,7 @@ const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const User = require('./user')
-const env = require('../../.env')
+const env = require('../../config/.env')
 
 const emailRegex = /\S+@\S+\.\S+/
 const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})/
@@ -41,6 +41,7 @@ const validateToken = (req, res, next) => {
 }
 
 const signup = (req, res, next) => {
+    console.log('reqbdy', req.body)
     const name = req.body.name || ''
     const email = req.body.email || ''
     const password = req.body.password || ''
@@ -58,9 +59,14 @@ const signup = (req, res, next) => {
             ]
         })
     }
-
+    
     const salt = bcrypt.genSaltSync()
+
+    console.log('salt', salt)
+
     const passwordHash = bcrypt.hashSync(password, salt)
+
+    console.log('passwordHash', passwordHash)
     if (!bcrypt.compareSync(confirmPassword, passwordHash)) {
         return res.status(400).send({ errors: ['Senhas não conferem.'] })
     }
